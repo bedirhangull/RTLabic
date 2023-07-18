@@ -1,10 +1,10 @@
 import * as vscode from "vscode";
 
 export function getModifiedText(selected: string) {
-  // Create a regular expression that matches the CSS class names that we want to modify.
+  // Create a regular expression that matches the CSS class names that we want to modify. You can add bootstrap classes or other css frameworks.
   const regex = /(mr|pr|ml|pl|left|right|text)-(\d+|auto|left|right)/g;
 
-  // Create a map of replacements.
+  // ToDo(move rules to json file)
   const replacements: Record<
     string,
     string | { left: string; default: string }
@@ -21,17 +21,13 @@ export function getModifiedText(selected: string) {
     mr: "ltr:ml",
   };
 
-  // Replace the CSS class names in the selected text.
   return selected.replace(regex, (match, prefix, value) => {
     if (prefix + value == "textright") {
       return prefix + "-" + value + " " + "ltr" + ":" + prefix + "-left";
     } else if (prefix + value == "textleft") {
       return prefix + "-" + value + " " + "rtl" + ":" + prefix + "-right";
     } else {
-      // Get the replacement for the matched class name.
       const replacement = replacements[prefix] || replacements[prefix + value];
-
-      // Return the modified CSS class name.
       return prefix + "-" + value + " " + replacement + "-" + value;
     }
   });
